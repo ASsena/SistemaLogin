@@ -1,6 +1,8 @@
 package com.sistemalogin.login.domain.entities;
 
+import com.sistemalogin.login.domain.dto.UserAccess;
 import jakarta.persistence.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;
 import java.util.UUID;
@@ -20,12 +22,14 @@ public class User {
     joinColumns = @JoinColumn(name="user_id"),
     inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
+    private boolean ativo = true;
 
-    public User(UUID id, String username, String password, Set<Role> roles) {
+    public User(UUID id, String username, String password, Set<Role> roles, boolean ativo) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.roles = roles;
+        this.ativo = ativo;
     }
 
     public User() {}
@@ -60,5 +64,17 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public boolean loginIsCorrect(UserAccess userAccess, PasswordEncoder passwordEncoder){
+        return passwordEncoder.matches(userAccess.password(), this.password);
     }
 }
