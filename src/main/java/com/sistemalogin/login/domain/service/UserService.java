@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -30,7 +31,7 @@ public class UserService {
         var roles = roleRepository.findByName(Role.Value.BASIC.name());
 
        userRepository.findByUsername(infoUser.username()).ifPresentOrElse(
-            users -> {throw new ResponseStatusException(HttpStatus.FORBIDDEN, "user already exists");},
+            users -> {throw new ResponseStatusException(HttpStatus.FORBIDDEN);},
             () -> {
                 var user = new User();
                 user.setUsername(infoUser.username());
@@ -39,8 +40,10 @@ public class UserService {
                 userRepository.save(user);
             }
         );
+    }
 
-
+    public List<User> allUsers(){
+        return userRepository.findAll();
     }
 
 }

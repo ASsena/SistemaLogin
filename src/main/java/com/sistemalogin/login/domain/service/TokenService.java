@@ -39,7 +39,7 @@ public class TokenService {
         if (userrpository.isEmpty() || !userrpository.get().loginIsCorrect(userAccess, bCryptPasswordEncoder)) {
             System.out.println(userAccess.username());
             System.out.println(userAccess.password());
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "username or password is invalid");
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
         }
 
         var now = Instant.now();
