@@ -22,12 +22,14 @@ public class TokenService {
     private final RoleRepository rolerepo;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RoleRepository roleRepository;
+    private final JwtEncoder jwtEncoder;
 
-    public TokenService(UserRepository userepo, RoleRepository rolerepo, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository) {
+    public TokenService(UserRepository userepo, RoleRepository rolerepo, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository, JwtEncoder jwtEncoder) {
         this.userepo = userepo;
         this.rolerepo = rolerepo;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.roleRepository = roleRepository;
+        this.jwtEncoder = jwtEncoder;
     }
 
     public String createToken(UserAccess userAccess) {
@@ -35,6 +37,8 @@ public class TokenService {
         var userrpository = userepo.findByUsername(userAccess.username());
 
         if (userrpository.isEmpty() || !userrpository.get().loginIsCorrect(userAccess, bCryptPasswordEncoder)) {
+            System.out.println(userAccess.username());
+            System.out.println(userAccess.password());
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "username or password is invalid");
         }
 
@@ -54,6 +58,6 @@ public class TokenService {
                 .claim("scope", scopes)
                 .build();
 
-        return JwtEncoderParameters.from(claims).toString();
+        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 }

@@ -30,12 +30,13 @@ public class UserService {
         var roles = roleRepository.findByName(Role.Value.BASIC.name());
 
        userRepository.findByUsername(infoUser.username()).ifPresentOrElse(
-            user -> {throw new ResponseStatusException(HttpStatus.FORBIDDEN, "user already exists");},
+            users -> {throw new ResponseStatusException(HttpStatus.FORBIDDEN, "user already exists");},
             () -> {
                 var user = new User();
                 user.setUsername(infoUser.username());
                 user.setPassword(passwordEncoder.encode(infoUser.password()));
                 user.setRoles(Set.of(roles));
+                userRepository.save(user);
             }
         );
 
