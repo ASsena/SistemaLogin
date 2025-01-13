@@ -38,7 +38,6 @@ public class TokenService {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "username or password is invalid");
         }
 
-
         var now = Instant.now();
         var expir = 300L;
 
