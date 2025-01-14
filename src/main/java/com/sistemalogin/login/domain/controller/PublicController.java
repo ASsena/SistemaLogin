@@ -7,6 +7,8 @@ import com.sistemalogin.login.domain.service.TokenService;
 import com.sistemalogin.login.domain.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -23,6 +25,7 @@ public class PublicController {
     }
 
     @PostMapping("/create")
+    @Transactional
     public ResponseEntity<?> createUserPost(@RequestBody InfoUser infoUser){
         try{
             userService.createUser(infoUser);
@@ -34,6 +37,7 @@ public class PublicController {
     }
 
     @PostMapping("/login")
+    @Transactional
     public ResponseEntity login(@RequestBody UserAccess userAccess){
         try{
             return ResponseEntity.ok(new LoginResponse(tokenService.createToken(userAccess), 300L));

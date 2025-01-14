@@ -6,9 +6,9 @@ import com.sistemalogin.login.domain.repository.RoleRepository;
 import com.sistemalogin.login.domain.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.Set;
 
@@ -25,6 +25,7 @@ public class AdminConfig implements CommandLineRunner {
     }
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
 
         var roles = roleRepository.findByName(Role.Value.ADMIN.name());

@@ -6,11 +6,14 @@ import com.sistemalogin.login.domain.entities.User;
 import com.sistemalogin.login.domain.repository.RoleRepository;
 import com.sistemalogin.login.domain.repository.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -42,8 +45,33 @@ public class UserService {
         );
     }
 
+    public User userEspecifico(String username){
+        var userep = userRepository.findByUsername(username);
+        if(userep.isPresent() && userep.get().isAtivo()){
+            return userep.get();
+        }else{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
     public List<User> allUsers(){
-        return userRepository.findAll();
+        return userRepository.findAllByAtivoTrue();
+    }
+
+    public void deleteUser(String username, JwtAuthenticationToken token){
+
+        var user = userRepository.findByUsername(username);
+
+        if(token.getTokenAttributes().get("scope").equals("ADMIN")){
+            user.get().setAtivo(false);
+            userRepository.save(user.get());
+        } else if(user.get().getUsername().equals(token.getName())){
+            user.get().setAtivo(false);
+            token.setAuthenticated(false);
+            userRepository.save(user.get());
+        }else{
+           throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
     }
 
 }
